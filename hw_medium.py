@@ -47,31 +47,66 @@ model = Sequential()
 model.add(Dense(800, input_dim=784, activation = 'relu'))
 model.add(Dense(400, activation='relu'))
 model.add(Dense(10, activation = 'softmax'))
-model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+model.compile(loss='categorical_crossentropy', 
+              optimizer=Adam(learning_rate=0.001), 
+              metrics=['accuracy'])
 
 print(model.summary())
 
 
-model.fit(x_train, y_train, batch_size = 128, epochs = 15, verbose = 1)
+history =model.fit(x_train, 
+                   y_train, 
+                   batch_size = 256, 
+                   epochs = 50, 
+                   verbose = 1, 
+                   validation_split=0.1)
+
+
+# print(history.history['loss'][:5])
+
+
+# val_acc = history.history['val_accuracy']
+
+# for i in range(5):
+#     print('Эпоха: {:2} точность: {:5.1%}'.format(i, val_acc[i]))
+
+
+plt.plot(history.history['accuracy'],
+         label = 'Доля верных ответов на обучающем наборе')
+
+plt.plot(history.history['val_accuracy'],
+         label = 'Доля верных ответов на проверочном наборе')
+
+plt.plot(history.history['loss'],
+         label = 'Доля ошибок на обучающем наборе')
+
+plt.plot(history.history['val_loss'],
+         label = 'Доля ошибок на проверочном наборе')
+
+plt.xlabel('Эпоха обучений')
+plt.ylabel('Доля верных ответов')
+
+plt.legend()
+plt.show()
 
 # import gdown
 # print(gdown.download('https://storage.yandexcloud.net/aiueducation/Content/base/l3/hw_upro.zip', None, quiet=True))
 
 # Вывод для примера картинок по классу
 # Создание полотна из 10 графиков
-fig, axs = plt.subplots(1, 10, figsize=(25, 5))
-# Проход и отрисовка по всем классам
-for i in range(10):
-    img = load_img('digits/' + str(i) + '.png', target_size = (28, 28), color_mode = 'grayscale')
-    img = np.array(1 - np.array(img) / 255)
-    img[img < 0.5] = 0
-    img[img > 0.5] = 1
-    axs[i].imshow(img, cmap='gray')
-    # Вывод распознования
-    result = 'НЕВЕРНО' if (i != np.argmax(model.predict(img.reshape(1, 784)))) else 'Верно'
-    print('число', i, '.сеть распознала', np.argmax(model.predict(img.reshape(1, 784))), result)
+# fig, axs = plt.subplots(1, 10, figsize=(25, 5))
+# # Проход и отрисовка по всем классам
+# for i in range(10):
+#     img = load_img('digits/' + str(i) + '.png', target_size = (28, 28), color_mode = 'grayscale')
+#     img = np.array(1 - np.array(img) / 255)
+#     img[img < 0.5] = 0
+#     img[img > 0.5] = 1
+#     axs[i].imshow(img, cmap='gray')
+#     # Вывод распознования
+#     result = 'НЕВЕРНО' if (i != np.argmax(model.predict(img.reshape(1, 784)))) else 'Верно'
+#     print('число', i, '.сеть распознала', np.argmax(model.predict(img.reshape(1, 784))), result)
 
 
-plt.show()
+# plt.show()
 
 # Вывод для примера по каждому классу
